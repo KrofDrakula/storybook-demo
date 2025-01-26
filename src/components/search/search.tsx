@@ -43,11 +43,13 @@ export const Search = <T extends { id: string }>({
     () =>
       data.status == "success"
         ? map(data.data, (item) => (
-            <ItemRenderer
-              item={item}
-              onSelect={() => onSelect(item.id)}
-              key={item.id}
-            />
+            <Grid2 size={1} key={item.id}>
+              <ItemRenderer
+                item={item}
+                onSelect={() => onSelect(item.id)}
+                key={item.id}
+              />
+            </Grid2>
           ))
         : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,11 +67,7 @@ export const Search = <T extends { id: string }>({
       {data.status == "success" ? (
         <Grid2 container direction="row" spacing={2} columns={3}>
           {renderedItems.length ? (
-            renderedItems.map((item, idx) => (
-              <Grid2 size={1} key={idx}>
-                {item}
-              </Grid2>
-            ))
+            renderedItems
           ) : (
             <Typography variant="body1">No results found.</Typography>
           )}
