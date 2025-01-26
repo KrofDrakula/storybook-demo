@@ -1,25 +1,42 @@
 import Fiona from "fiona";
+import { toTitleCase } from "../../utils/strings";
 
-export const getPersonList = (n: number, seed = "some-random-string") => {
-  console.profile("data generation");
-  const list = Fiona(seed).array(n, (seeded) =>
+export const defaultSeed = "some-random-string";
+
+export type Book = {
+  id: string;
+  title: string;
+  author: Person;
+  img: string;
+  summary: string;
+};
+
+export type Person = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  bio: string;
+  img: string;
+};
+
+export const getBookList = (n: number, seed = defaultSeed) =>
+  Fiona(seed).array(n, (seeded) =>
     seeded.object({
       id: seeded.regex(/[0-9a-f]{16}/),
-      phone: seeded.regex(/\+\d{12}/),
-      name: seeded.name(),
+      author: seeded.object({
+        id: seeded.regex(/[0-9a-f]{16}/),
+        phone: seeded.regex(/\+\d{12}/),
+        name: seeded.name(),
+        img: seeded.img(),
+        bio: seeded.paragraph(),
+        email: (s) =>
+          s.data.name.toLowerCase().replace(/\s+/g, ".") + "@gmail.com",
+      }),
+      title: toTitleCase(
+        seeded.lorem({ qty: seeded.number({ min: 1, max: 10 }) })
+      ),
       img: seeded.img(),
-      bio: seeded.paragraph(),
-      email: (s) =>
-        s.data.name.toLowerCase().replace(/\s+/g, ".") + "@gmail.com",
+      summary: seeded.paragraph(),
     })
-  ) as unknown as {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
-    img: string;
-    bio: string;
-  }[];
-  console.profileEnd("data generation");
-  return list;
-};
+  ) as unknown as Book[];

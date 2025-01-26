@@ -1,37 +1,58 @@
-import type { ComponentType } from "react";
+import { useMemo, type ComponentType } from "react";
 import {
   Input,
   Stack,
   IconButton,
   Grid2,
-  Card,
-  CardActionArea,
+  Typography,
+  Alert,
 } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
 import { useLoader } from "../../hooks/use-loader";
+import { map } from "../../utils/collections";
 
 type Props<T extends { id: string }> = {
   /**
    * A function that returns a promise that resolves to an array of objects with
    * an `id` property.
    */
-  getData: () => Promise<T[]>;
+  getData: () => Promise<Iterable<T>>;
   /**
-   * A component type that will render the given item.
+   * A component type that will render the given item. Note that the contents
+   * will be wrapped in a `CardActionArea`.
    */
-  ItemRenderer: ComponentType<{ item: T }>;
+  ItemRenderer: ComponentType<{ item: T; onSelect: () => void }>;
   /**
-   * An event handler that will
+   * An event handler that will file when an item in the list is selected.
    */
-  onSelect?: (id: string) => void;
+  onSelect: (id: string) => void;
 };
 
+/**
+ * Takes an async data loading function and renders a list of items that the
+ * user can use to filter using text search
+ */
 export const Search = <T extends { id: string }>({
   ItemRenderer,
   getData,
   onSelect,
 }: Props<T>) => {
   const data = useLoader(getData);
+
+  const renderedItems = useMemo(
+    () =>
+      data.status == "success"
+        ? map(data.data, (item) => (
+            <ItemRenderer
+              item={item}
+              onSelect={() => onSelect(item.id)}
+              key={item.id}
+            />
+          ))
+        : [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [data.status]
+  );
 
   return (
     <Stack spacing={2} useFlexGap>
@@ -48,21 +69,14 @@ export const Search = <T extends { id: string }>({
           spacing={2}
           columns={{ xs: 2, md: 3, lg: 4 }}
         >
-          {data.data.map((item) => (
-            <Card key={item.id}>
-              <CardActionArea
-                disabled={!onSelect}
-                onClick={() => {
-                  onSelect?.(item.id);
-                }}
-              >
-                <ItemRenderer item={item} />
-              </CardActionArea>
-            </Card>
-          ))}
+          {renderedItems.length ? (
+            renderedItems
+          ) : (
+            <Typography variant="body1">No results found.</Typography>
+          )}
         </Grid2>
       ) : data.status == "error" ? (
-        <p>Error: {data.error.message}</p>
+        <Alert severity="error">Error: {data.error.message}</Alert>
       ) : null}
     </Stack>
   );

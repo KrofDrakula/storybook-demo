@@ -22,6 +22,12 @@ export const useLoader = <T>(getter: () => Promise<T>): State<T> => {
           setError(undefined);
         }
       })
+      .catch((err) => {
+        if (!controller.signal.aborted) {
+          setData(undefined);
+          setError(err as Error);
+        }
+      })
       .finally(() => setIsPending(false));
     return () => controller.abort();
   }, [getter]);

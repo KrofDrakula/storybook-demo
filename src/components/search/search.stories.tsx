@@ -2,60 +2,94 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Search } from "./search";
 import { delay } from "../../utils/async";
 import { fn } from "@storybook/test";
-import { getPersonList } from "./search.data";
-import { CardContent, CardMedia, Link, Typography } from "@mui/material";
+import { Book, defaultSeed, getBookList } from "./search.data";
+import {
+  Avatar,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  Typography,
+} from "@mui/material";
+import { ComponentProps, useCallback } from "react";
 
-const meta: Meta = {
+const onSelect = fn();
+
+const ItemRenderer = ({
+  item,
+  onSelect,
+}: {
+  item: Book;
+  onSelect: () => void;
+}) => (
+  <Card>
+    <CardHeader
+      avatar={<Avatar src={item.author.img} />}
+      title={item.title}
+      subheader={item.author.name}
+    />
+    <CardActionArea onClick={onSelect}>
+      <CardMedia component="img" image={item.img} height={300} />
+    </CardActionArea>
+    <CardContent>
+      <Typography variant="body1">{item.summary}</Typography>
+    </CardContent>
+  </Card>
+);
+
+const Template = ({ seed, generate, ...props }: StoryProps) => {
+  const getData = useCallback(
+    async () => delay(1000, generate(seed)),
+    [seed, generate]
+  );
+  return <Search {...props} getData={getData} />;
+};
+
+type StoryProps = ComponentProps<typeof Search<Book>> & {
+  seed: string;
+  generate: (seed: string) => Book[];
+};
+
+const meta: Meta<StoryProps> = {
   component: Search,
+  render: Template,
+  args: {
+    ItemRenderer,
+    onSelect,
+    seed: defaultSeed,
+  },
+  argTypes: {
+    ItemRenderer: { type: "function" },
+    generate: { type: "function" },
+  },
 };
 
 export default meta;
 
-type Item = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  bio: string;
-  img: string;
-};
-
-const ItemRenderer = ({ item }: { item: Item }) => (
-  <>
-    <CardMedia component="img" image={item.img} height={100} />
-    <CardContent>
-      <Typography variant="body1">
-        {item.name} (
-        <Link
-          href={`mailto:${item.email}`}
-          target="_blank"
-          onClick={(ev) => ev.stopPropagation()}
-        >
-          {item.email}
-        </Link>
-        )
-      </Typography>
-      <Typography variant="body2">{item.bio}</Typography>
-    </CardContent>
-  </>
-);
-
-const smallData = getPersonList(10);
-
-const largeData = getPersonList(1000);
-
-export const Default: StoryObj<typeof Search<Item>> = {
+export const SmallDataset: StoryObj<StoryProps> = {
   args: {
-    getData: () => delay(1000, smallData),
-    ItemRenderer,
-    onSelect: fn(),
+    generate: (seed) => getBookList(2, seed),
   },
 };
 
-export const LargeDataset: StoryObj<typeof Search<Item>> = {
+export const NoData: StoryObj<StoryProps> = {
   args: {
-    getData: () => delay(1000, largeData),
-    ItemRenderer,
-    onSelect: fn(),
+    generate: () => [],
   },
+};
+
+export const WithError: StoryObj<StoryProps> = {
+  args: {
+    generate: () => {
+      throw new Error("fetch failed");
+    },
+  },
+};
+
+export const LargeDataset: StoryObj<StoryProps> = {
+  args: {
+    generate: (seed) => getBookList(1000, seed),
+  },
+  tags: ["!autodocs"],
 };
