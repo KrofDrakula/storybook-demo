@@ -63,14 +63,13 @@ export const Search = <T extends { id: string }>({
         </IconButton>
       </Stack>
       {data.status == "success" ? (
-        <Grid2
-          container
-          direction="row"
-          spacing={2}
-          columns={{ xs: 2, md: 3, lg: 4 }}
-        >
+        <Grid2 container direction="row" spacing={2} columns={3}>
           {renderedItems.length ? (
-            renderedItems
+            renderedItems.map((item, idx) => (
+              <Grid2 size={1} key={idx}>
+                {item}
+              </Grid2>
+            ))
           ) : (
             <Typography variant="body1">No results found.</Typography>
           )}

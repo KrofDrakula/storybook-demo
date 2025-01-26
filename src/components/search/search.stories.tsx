@@ -72,7 +72,7 @@ export default meta;
 
 export const SmallDataset: StoryObj<StoryProps> = {
   args: {
-    generate: (seed) => getBookList(2, seed),
+    generate: (seed) => getBookList(3, seed),
   },
 };
 
