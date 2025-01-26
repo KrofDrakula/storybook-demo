@@ -40,7 +40,7 @@ const ItemRenderer = ({
 
 const Template = ({ seed, generate, ...props }: StoryProps) => {
   const getData = useCallback(
-    async () => delay(1000, generate(seed)),
+    async () => delay(500, generate(seed)),
     [seed, generate]
   );
   return <Search {...props} getData={getData} />;
@@ -62,6 +62,9 @@ const meta: Meta<StoryProps> = {
   argTypes: {
     ItemRenderer: { type: "function" },
     generate: { type: "function" },
+  },
+  parameters: {
+    chromatic: { delay: 1500 },
   },
 };
 
@@ -90,6 +93,9 @@ export const WithError: StoryObj<StoryProps> = {
 export const LargeDataset: StoryObj<StoryProps> = {
   args: {
     generate: (seed) => getBookList(1000, seed),
+  },
+  parameters: {
+    chromatic: { disableSnapshot: true },
   },
   tags: ["!autodocs"],
 };
