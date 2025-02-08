@@ -1,32 +1,7 @@
-import styled from "@emotion/styled";
 import { Input, Typography } from "@mui/material";
 import { useLayoutEffect, useRef } from "react";
 import { Message, User } from "./types";
-
-const Layout = styled.div`
-  display: grid;
-  width: 100%;
-  height: 100%;
-  grid-template-rows: 1fr auto;
-  grid-template-areas: "messages" "input";
-  gap: 8px;
-  border: 1px solid #0003;
-  border-radius: 4px;
-  overflow: hidden;
-`;
-
-const MessageList = styled.ul`
-  grid-area: messages;
-  overflow: hidden;
-  overflow-y: auto;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-`;
-
-const InputContainer = styled.div`
-  grid-area: input;
-`;
+import styles from "./chat.module.css";
 
 type Props = {
   users: Map<string, User>;
@@ -45,8 +20,8 @@ export const Chat = ({ users, messages, sendMessage }: Props) => {
   }, [messages]);
 
   return (
-    <Layout style={{ maxHeight: "100%" }}>
-      <MessageList ref={messageList}>
+    <div className={styles.layout} style={{ maxHeight: "100%" }}>
+      <ul className={styles.messageList} ref={messageList}>
         {messages.map((message) => {
           const user = users.get(message.userId)!;
           return (
@@ -61,8 +36,8 @@ export const Chat = ({ users, messages, sendMessage }: Props) => {
             </li>
           );
         })}
-      </MessageList>
-      <InputContainer>
+      </ul>
+      <div className={styles.inputContainer}>
         <Input
           placeholder="Type a message"
           sx={{ width: "100%" }}
@@ -77,7 +52,7 @@ export const Chat = ({ users, messages, sendMessage }: Props) => {
             }
           }}
         />
-      </InputContainer>
-    </Layout>
+      </div>
+    </div>
   );
 };

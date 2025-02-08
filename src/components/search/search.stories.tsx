@@ -52,6 +52,7 @@ type StoryProps = ComponentProps<typeof Search<Book>> & {
 };
 
 const meta: Meta<StoryProps> = {
+  title: "04 - Search",
   component: Search,
   render: Template,
   args: {
@@ -66,6 +67,7 @@ const meta: Meta<StoryProps> = {
   parameters: {
     chromatic: { delay: 1500 },
   },
+  tags: ["!autodocs"],
 };
 
 export default meta;

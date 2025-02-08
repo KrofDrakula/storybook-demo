@@ -36,8 +36,10 @@ const Template: typeof Chat = ({
 };
 
 const meta: Meta<typeof Chat> = {
+  title: "03 - Chat",
   component: Chat,
   render: Template,
+  tags: ["!autodocs"],
 };
 
 export default meta;

@@ -1,0 +1,24 @@
+.layout {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-rows: 1fr auto;
+  grid-template-areas: "messages" "input";
+  gap: 8px;
+  border: 1px solid #0003;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.messageList {
+  grid-area: messages;
+  overflow: hidden;
+  overflow-y: auto;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.inputContainer {
+  grid-area: input;
+}
