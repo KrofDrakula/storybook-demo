@@ -62,7 +62,7 @@ export const withMatrix = makeDecorator({
               <tr key={rowValue + ""}>
                 <th>{rowValue + ""}</th>
                 {column.values.map((value) => (
-                  <td>
+                  <td key={value + ""}>
                     {renderStory(getStory, context, {
                       [column.prop]: value,
                       [row.prop]: rowValue,

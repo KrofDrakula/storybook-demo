@@ -17,9 +17,6 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    chromatic: {
-      disableSnapshot: true,
-    },
   },
   tags: ["autodocs"],
 };
