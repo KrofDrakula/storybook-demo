@@ -1,8 +1,12 @@
 import type { Preview } from "@storybook/react";
 import "../src/base.css";
 import { withMatrix } from "../src/storybook/matrix";
+import { initialize, mswLoader } from "msw-storybook-addon";
+
+initialize();
 
 const preview: Preview = {
+  loaders: [mswLoader],
   decorators: [withMatrix],
   parameters: {
     options: {

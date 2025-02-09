@@ -94,7 +94,7 @@ export const WithError: StoryObj<StoryProps> = {
 
 export const LargeDataset: StoryObj<StoryProps> = {
   args: {
-    generate: (seed) => getBookList(1000, seed),
+    generate: (seed) => getBookList(500, seed),
   },
   parameters: {
     chromatic: { disableSnapshot: true },

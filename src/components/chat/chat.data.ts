@@ -25,7 +25,9 @@ export const createChatHistory = (
 
   const messages = Fiona(seed + "-messages").array(messageCount, (seeded) =>
     seeded.object({
-      timestamp: new Date() as unknown as Fiona.InputStructure,
+      timestamp: new Date(
+        seeded.date({ long: true })
+      ) as unknown as Fiona.InputStructure,
       userId: seeded.oneOf(userIds),
       text: seeded.sentence(),
     })
