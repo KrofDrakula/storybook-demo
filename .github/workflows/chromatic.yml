@@ -20,7 +20,17 @@ jobs:
       - name: Install dependencies
         run: pnpm i
       - name: Run Chromatic
+        id: chromatic_publish
         uses: chromaui/action@latest
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           onlyChanged: true
+  test-storybook:
+    name: Storybook Tests
+    runs-on: ubuntu-latest
+    needs: [chromatic]
+    steps:
+      - name: Run Storybook tests
+        run: yarn test-storybook
+        env:
+          TARGET_URL: "${{ needs.chromatic.outputs.storybookUrl }}"
