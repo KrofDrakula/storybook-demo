@@ -25,3 +25,10 @@ dist-ssr
 
 *storybook.log
 storybook-static
+chromatic.config.json
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
