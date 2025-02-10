@@ -61,7 +61,8 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "@swc/core"
+      "@swc/core",
+      "msw"
     ]
   },
   "msw": {
