@@ -1,4 +1,4 @@
-import { useMemo, type ComponentType } from "react";
+import { useMemo, useState, type ComponentType } from "react";
 import {
   Input,
   Stack,
@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
 import { useLoader } from "../../hooks/use-loader";
-import { map } from "../../utils/collections";
 
 type Props<T extends { id: string }> = {
   /**
@@ -26,6 +25,7 @@ type Props<T extends { id: string }> = {
    * An event handler that will file when an item in the list is selected.
    */
   onSelect: (id: string) => void;
+  searchMap: (item: T) => string;
 };
 
 /**
@@ -35,31 +35,50 @@ type Props<T extends { id: string }> = {
 export const Search = <T extends { id: string }>({
   ItemRenderer,
   getData,
+  searchMap,
   onSelect,
 }: Props<T>) => {
   const data = useLoader(getData);
+  const [query, setQuery] = useState("");
+  const term = query.trim().replace(/\s+/g, " ").toLowerCase();
+
+  const filteredItems = useMemo(
+    () =>
+      data.status == "success"
+        ? [...data.data].filter((item) =>
+            searchMap(item).toLowerCase().includes(term)
+          )
+        : [],
+    // @ts-expect-error data.data is conditionally available but fine to access here
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [data.status, data.data, searchMap, term]
+  );
 
   const renderedItems = useMemo(
     () =>
-      data.status == "success"
-        ? map(data.data, (item) => (
-            <Grid2 size={1} key={item.id}>
-              <ItemRenderer
-                item={item}
-                onSelect={() => onSelect(item.id)}
-                key={item.id}
-              />
-            </Grid2>
-          ))
-        : [],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data.status]
+      filteredItems.map((item) => (
+        <Grid2 size={1} key={item.id}>
+          <ItemRenderer
+            item={item}
+            onSelect={() => onSelect(item.id)}
+            key={item.id}
+          />
+        </Grid2>
+      )),
+    [ItemRenderer, filteredItems, onSelect]
   );
 
   return (
     <Stack spacing={2} useFlexGap>
       <Stack direction="row" spacing={2} useFlexGap>
-        <Input type="search" placeholder="Ctrl + ⌘" />
+        <Input
+          type="search"
+          placeholder="Search"
+          onInput={(ev) => {
+            setQuery((ev.target as HTMLInputElement).value);
+          }}
+          value={query}
+        />
         <IconButton aria-label="search" loading={data.status == "pending"}>
           <SearchIcon />
         </IconButton>

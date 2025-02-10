@@ -59,10 +59,13 @@ const meta: Meta<StoryProps> = {
     ItemRenderer,
     onSelect,
     seed: defaultSeed,
+    searchMap: (item: Book) =>
+      [item.title, item.summary, item.author.name].join(" "),
   },
   argTypes: {
     ItemRenderer: { type: "function" },
     generate: { type: "function" },
+    searchMap: { type: "function" },
   },
   parameters: {
     chromatic: { delay: 1500 },
