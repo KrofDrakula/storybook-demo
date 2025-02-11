@@ -18,7 +18,11 @@ export default meta;
 
 type Story = StoryObj<typeof Button>;
 
-export const Interactive: Story = {};
+export const Interactive: Story = {
+  args: {
+    children: "Hello world!",
+  },
+};
 
 export const Variants: Story = {
   parameters: {
